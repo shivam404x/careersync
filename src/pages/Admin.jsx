@@ -15,6 +15,7 @@ const COLORS = ['#10b981', '#f43f5e', '#f59e0b', '#6366f1', '#8b5cf6'];
 export default function Admin() {
   const [activeView, setActiveView] = useState("dashboard");
   const [toast, setToast] = useState({ show: false, message: "", type: "success" });
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Mobile sidebar state
 
   // Global Data States
   const [users, setUsers] = useState([]);
@@ -68,14 +69,25 @@ export default function Admin() {
   const handleLogout = () => signOut(auth);
 
   return (
-    <div className="flex h-screen bg-[#0a0a0a] text-zinc-300 font-sans overflow-hidden selection:bg-indigo-500/30">
+    <div className="flex h-screen bg-[#0a0a0a] text-zinc-300 font-sans overflow-hidden selection:bg-indigo-500/30 w-full max-w-[100vw]">
       
+      {/* MOBILE OVERLAY */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/80 z-40 md:hidden backdrop-blur-sm"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* --- SIDEBAR --- */}
-      <aside className="w-64 bg-black/50 border-r border-white/5 flex flex-col backdrop-blur-xl z-20 shrink-0">
-        <div className="p-6 border-b border-white/5">
+      <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-black/95 md:bg-black/50 border-r border-white/5 flex flex-col backdrop-blur-xl shrink-0 transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="p-6 border-b border-white/5 flex justify-between items-center">
           <h1 className="text-2xl font-black text-white tracking-tight">
             Career<span className="text-indigo-500">Sync</span> <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1 border border-white/10 px-1.5 py-0.5 rounded">Admin</span>
           </h1>
+          <button className="md:hidden text-zinc-400 hover:text-white" onClick={() => setIsSidebarOpen(false)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+          </button>
         </div>
         
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto custom-scrollbar">
@@ -90,7 +102,10 @@ export default function Admin() {
           ].map((item) => (
             <button
               key={item.id}
-              onClick={() => setActiveView(item.id)}
+              onClick={() => {
+                setActiveView(item.id);
+                setIsSidebarOpen(false);
+              }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-all ${
                 activeView === item.id 
                   ? "bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" 
@@ -110,14 +125,19 @@ export default function Admin() {
       </aside>
 
       {/* --- MAIN CONTENT --- */}
-      <main className="flex-1 flex flex-col relative overflow-hidden">
+      <main className="flex-1 flex flex-col relative overflow-hidden min-w-0 w-full">
         {/* Glow Effects */}
         <div className="absolute top-[-10%] right-[-5%] w-[40%] h-[40%] rounded-full bg-indigo-600/10 blur-[150px] pointer-events-none" />
         <div className="absolute bottom-[-10%] left-[-10%] w-[30%] h-[30%] rounded-full bg-purple-600/10 blur-[150px] pointer-events-none" />
 
         {/* TOP NAVBAR */}
-        <header className="h-18.25 shrink-0 bg-black/40 border-b border-white/5 flex items-center justify-between px-8 backdrop-blur-md z-10">
-          <h2 className="text-xl font-bold text-white capitalize">{activeView}</h2>
+        <header className="h-18.25 shrink-0 bg-black/40 border-b border-white/5 flex items-center justify-between px-4 md:px-8 backdrop-blur-md z-10">
+          <div className="flex items-center gap-3">
+            <button className="md:hidden text-zinc-400 hover:text-white" onClick={() => setIsSidebarOpen(true)}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <h2 className="text-xl font-bold text-white capitalize">{activeView}</h2>
+          </div>
           <div className="flex items-center gap-6">
             <div className="relative hidden md:block">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500" size={16} />
@@ -127,14 +147,14 @@ export default function Admin() {
               <Bell size={20} />
               <span className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full"></span>
             </button>
-            <div className="w-9 h-9 rounded-full bg-linear-to-tr from-indigo-500 to-purple-500 border border-white/10 flex items-center justify-center text-white font-bold text-sm">
+            <div className="w-9 h-9 rounded-full bg-linear-to-tr from-indigo-500 to-purple-500 border border-white/10 flex items-center justify-center text-white font-bold text-sm shrink-0">
               A
             </div>
           </div>
         </header>
 
         {/* SCROLLABLE VIEW AREA */}
-        <div className="flex-1 overflow-y-auto p-6 md:p-10 z-10 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto p-4 md:p-6 lg:p-10 z-10 custom-scrollbar w-full">
           {loading && activeView === "dashboard" ? (
             <div className="flex items-center justify-center h-full">
               <div className="w-10 h-10 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
@@ -190,17 +210,17 @@ function DashboardView({ users, internships, applications }) {
   ];
 
   return (
-    <div className="space-y-8 animate-in fade-in">
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+    <div className="space-y-6 md:space-y-8 animate-in fade-in w-full">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
         {stats.map((s, i) => (
           <div key={i} className={`bg-white/5 border border-white/5 rounded-2xl p-5 hover:border-white/20 hover:bg-white/10 transition-colors ${s.border}`}>
             <h3 className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mb-2 line-clamp-1">{s.label}</h3>
-            <div className={`text-3xl font-black ${s.color}`}>{s.value}</div>
+            <div className={`text-2xl md:text-3xl font-black ${s.color}`}>{s.value}</div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 w-full">
         <div className="lg:col-span-2 bg-white/5 border border-white/10 rounded-3xl p-6">
           <h3 className="text-lg font-bold text-white mb-6">Application Analytics</h3>
           <div className="h-64 border border-dashed border-white/5 rounded-xl p-4">
@@ -211,8 +231,8 @@ function DashboardView({ users, internships, applications }) {
           <h3 className="text-lg font-bold text-white mb-6">Recent Applications</h3>
           <div className="space-y-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
             {applications.slice(0, 6).map((app, i) => (
-              <div key={i} className="flex items-center justify-between pb-4 border-b border-white/5 last:border-0 last:pb-0">
-                <div className="pr-4">
+              <div key={i} className="flex flex-wrap sm:flex-nowrap items-start sm:items-center justify-between pb-4 border-b border-white/5 last:border-0 last:pb-0 gap-2">
+                <div className="pr-4 w-full sm:w-auto">
                   <p className="text-sm font-bold text-white line-clamp-1">{app.name}</p>
                   <p className="text-[11px] text-zinc-500 line-clamp-1">{app.internshipTitle}</p>
                 </div>
@@ -270,8 +290,8 @@ function ApplicationsView({ applications, showToast }) {
   const filtered = applications.filter(a => a.name?.toLowerCase().includes(search.toLowerCase()) || a.internshipTitle?.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="animate-in fade-in space-y-6">
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+    <div className="animate-in fade-in space-y-6 w-full">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 w-full">
         <input type="text" placeholder="Search applicant or role..." value={search} onChange={e=>setSearch(e.target.value)} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white w-full md:w-80 focus:border-indigo-500 focus:outline-none transition-colors" />
         <span className="text-sm font-semibold text-zinc-400">Showing {filtered.length} applications</span>
       </div>
@@ -281,7 +301,7 @@ function ApplicationsView({ applications, showToast }) {
           <p className="text-zinc-500">No applications match your search.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6 w-full">
           {filtered.map((app) => (
             <div key={app.id} className="group relative bg-white/5 border border-white/10 hover:border-indigo-500/40 rounded-3xl p-6 transition-all duration-300 hover:bg-white/10 flex flex-col h-full backdrop-blur-md">
               <div className="flex justify-between items-start mb-6">
@@ -291,12 +311,12 @@ function ApplicationsView({ applications, showToast }) {
 
               <div className="mb-6 pb-6 border-b border-white/10">
                 <h2 className="text-xl font-bold text-white mb-3 flex items-center gap-2">
-                  <UserIcon size={18} className="text-indigo-400" />
-                  {app.name}
+                  <UserIcon size={18} className="text-indigo-400 shrink-0" />
+                  <span className="truncate">{app.name}</span>
                 </h2>
                 <div className="space-y-2 text-sm text-zinc-400">
-                  <p className="flex items-center gap-2"><Mail size={14} className="text-zinc-500" /><a href={`mailto:${app.email}`} className="hover:text-indigo-400 transition-colors break-all">{app.email}</a></p>
-                  <p className="flex items-center gap-2"><Calendar size={14} className="text-zinc-500" />{formatDate(app.appliedAt)}</p>
+                  <p className="flex items-center gap-2"><Mail size={14} className="text-zinc-500 shrink-0" /><a href={`mailto:${app.email}`} className="hover:text-indigo-400 transition-colors break-all line-clamp-1">{app.email}</a></p>
+                  <p className="flex items-center gap-2"><Calendar size={14} className="text-zinc-500 shrink-0" />{formatDate(app.appliedAt)}</p>
                 </div>
               </div>
 
@@ -304,11 +324,11 @@ function ApplicationsView({ applications, showToast }) {
                 <div className="space-y-3 text-sm">
                   <div>
                     <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Role Applied</span>
-                    <p className="font-semibold text-zinc-200 flex items-center gap-2"><Briefcase size={14} className="text-indigo-400" /> {app.internshipTitle}</p>
+                    <p className="font-semibold text-zinc-200 flex items-start gap-2"><Briefcase size={14} className="text-indigo-400 shrink-0 mt-0.5" /> <span className="line-clamp-2">{app.internshipTitle}</span></p>
                   </div>
                   <div>
                     <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest block mb-1">Company</span>
-                    <p className="font-semibold text-zinc-200 flex items-center gap-2"><Building2 size={14} className="text-indigo-400" /> {app.company}</p>
+                    <p className="font-semibold text-zinc-200 flex items-center gap-2"><Building2 size={14} className="text-indigo-400 shrink-0" /> <span className="truncate">{app.company}</span></p>
                   </div>
                   {app.resumeLink && (
                     <div className="pt-2">
@@ -347,7 +367,7 @@ function InternshipsView({ internships, showToast }) {
   const filtered = internships.filter(i => i.title?.toLowerCase().includes(search.toLowerCase()) || i.company?.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="animate-in fade-in space-y-6">
+    <div className="animate-in fade-in space-y-6 w-full">
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
         <input type="text" placeholder="Search internships or companies..." value={search} onChange={e=>setSearch(e.target.value)} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white w-full sm:w-80 focus:border-indigo-500 focus:outline-none" />
         <button className="bg-indigo-600 text-white px-5 py-2.5 rounded-xl text-sm font-bold hover:bg-indigo-500 flex items-center gap-2 w-full sm:w-auto justify-center transition-all shadow-lg shadow-indigo-500/20">
@@ -355,7 +375,7 @@ function InternshipsView({ internships, showToast }) {
         </button>
       </div>
 
-      <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden overflow-x-auto">
+      <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden overflow-x-auto w-full">
         <table className="w-full text-left text-sm min-w-200">
           <thead className="bg-black/40 border-b border-white/10 text-zinc-500 uppercase tracking-widest text-[10px]">
             <tr>
@@ -412,10 +432,10 @@ function UsersView({ users, showToast }) {
   const filtered = users.filter(u => u.name?.toLowerCase().includes(search.toLowerCase()) || u.email?.toLowerCase().includes(search.toLowerCase()));
 
   return (
-    <div className="animate-in fade-in space-y-6">
+    <div className="animate-in fade-in space-y-6 w-full">
       <input type="text" placeholder="Search by name or email..." value={search} onChange={e=>setSearch(e.target.value)} className="bg-white/5 border border-white/10 rounded-xl px-4 py-2.5 text-sm text-white w-full sm:w-80 focus:border-indigo-500 focus:outline-none" />
       
-      <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden overflow-x-auto">
+      <div className="bg-white/5 border border-white/10 rounded-2xl overflow-hidden overflow-x-auto w-full">
         <table className="w-full text-left text-sm min-w-175">
           <thead className="bg-black/40 border-b border-white/10 text-zinc-500 uppercase tracking-widest text-[10px]">
             <tr>
@@ -486,7 +506,7 @@ function AnalyticsView({ applications, mini = false }) {
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in">
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-in fade-in w-full">
       <div className="bg-white/5 border border-white/10 rounded-3xl p-6 h-96 flex flex-col">
         <h3 className="text-lg font-bold text-white mb-6">Application Status</h3>
         <div className="flex-1">
