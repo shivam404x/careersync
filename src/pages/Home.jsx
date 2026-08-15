@@ -42,10 +42,10 @@ function Home() {
   const user = auth.currentUser;
 
   return (
-    // FIXED OVERFLOW CONTROL: Replaced max-w-[100vw] with w-full to prevent scrollbar layout shift
-    <div className="relative min-h-screen bg-[#0a0a0a] text-zinc-300 font-sans selection:bg-indigo-500/30 w-full overflow-x-hidden">
+    // STRICT OVERFLOW CONTROL: w-full max-w-[100vw] overflow-x-hidden
+    <div className="relative min-h-screen bg-[#0a0a0a] text-zinc-300 font-sans selection:bg-indigo-500/30 w-full max-w-[100vw] overflow-x-hidden">
       
-      {/* BACKGROUND GLOW EFFECTS */}
+      {/* BACKGROUND GLOW EFFECTS (Ensured they don't break horizontal scroll) */}
       <div className="absolute top-[-10%] left-[-10%] w-[70%] h-[50%] rounded-full bg-indigo-600/20 blur-[120px] pointer-events-none md:w-[50%]" />
       <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[40%] rounded-full bg-purple-600/20 blur-[120px] pointer-events-none md:w-[40%]" />
       <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-[0.15] pointer-events-none" />
@@ -76,7 +76,7 @@ function Home() {
             Bridge the gap between your academic journey and industry demands. Build ATS-optimized resumes, discover critical skill gaps, and secure elite internships.
           </p>
 
-          {/* RESPONSIVE CTA BUTTONS */}
+          {/* RESPONSIVE CTA BUTTONS (Stacked on mobile, row on tablet+) */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-20 md:mb-24 w-full sm:w-auto px-2">
             <Link
               to="/resume-builder"
@@ -104,7 +104,7 @@ function Home() {
           </div>
         </div>
 
-        {/* STATISTICS */}
+        {/* STATISTICS (Responsive Grid) */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-7xl pb-16 md:pb-20 border-b border-white/5 mx-auto">
           {STATS.map((stat, i) => (
             <div key={i} className={`flex flex-col items-center justify-center p-4 md:p-6 text-center ${i % 2 !== 0 ? 'border-l border-white/5' : ''} ${i > 1 ? 'border-t md:border-t-0 border-white/5' : ''} md:border-l`}>
@@ -175,6 +175,7 @@ function Home() {
             </ul>
           </div>
 
+          {/* Timeline - Adjusted for mobile */}
           <div className="bg-white/5 border border-white/10 p-5 md:p-8 rounded-3xl w-full">
             <h3 className="text-xl md:text-2xl font-bold text-white mb-6 md:mb-8">Your Growth Roadmap</h3>
             <div className="space-y-6 md:space-y-8 relative before:absolute before:inset-0 before:ml-4.5 md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-linear-to-b before:from-transparent before:via-white/10 before:to-transparent">
