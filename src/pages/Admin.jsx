@@ -6,7 +6,7 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, Tooltip, ResponsiveContainer
 import { 
   LayoutDashboard, Users, Briefcase, FileText, BarChart3, MessageSquare, 
   Settings, LogOut, CheckCircle, XCircle, Trash2, Edit, Plus, Search, Bell,
-  Mail, Building2, Calendar, Clock, User as UserIcon
+  Mail, Building2, Calendar, Clock, User as UserIcon, Menu, X
 } from "lucide-react";
 
 // --- THEME COLORS FOR CHARTS ---
@@ -69,7 +69,7 @@ export default function Admin() {
   const handleLogout = () => signOut(auth);
 
   return (
-    <div className="flex h-screen bg-[#0a0a0a] text-zinc-300 font-sans overflow-hidden selection:bg-indigo-500/30 w-full max-w-[100vw]">
+    <div className="flex h-screen bg-[#0a0a0a] text-zinc-300 font-sans overflow-hidden selection:bg-indigo-500/30 w-full">
       
       {/* MOBILE OVERLAY */}
       {isSidebarOpen && (
@@ -86,7 +86,7 @@ export default function Admin() {
             Career<span className="text-indigo-500">Sync</span> <span className="text-[10px] uppercase tracking-widest text-zinc-500 font-bold ml-1 border border-white/10 px-1.5 py-0.5 rounded">Admin</span>
           </h1>
           <button className="md:hidden text-zinc-400 hover:text-white" onClick={() => setIsSidebarOpen(false)}>
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            <X size={20} />
           </button>
         </div>
         
@@ -134,7 +134,7 @@ export default function Admin() {
         <header className="h-18.25 shrink-0 bg-black/40 border-b border-white/5 flex items-center justify-between px-4 md:px-8 backdrop-blur-md z-10">
           <div className="flex items-center gap-3">
             <button className="md:hidden text-zinc-400 hover:text-white" onClick={() => setIsSidebarOpen(true)}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+              <Menu size={24} />
             </button>
             <h2 className="text-xl font-bold text-white capitalize">{activeView}</h2>
           </div>
